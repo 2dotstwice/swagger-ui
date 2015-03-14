@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var fs = require('fs');
 var es = require('event-stream');
 var gutil = require('gulp-util');
 var clean = require('gulp-clean');
@@ -15,6 +16,7 @@ var declare = require('gulp-declare');
 var watch = require('gulp-watch');
 var connect = require('gulp-connect');
 var header = require('gulp-header');
+var replace = require('gulp-replace');
 var pkg = require('./package.json');
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -23,6 +25,9 @@ var banner = ['/**',
   ' * @license <%= pkg.license %>',
   ' */',
   ''].join('\n');
+
+var configFile = fs.existsSync('config.json') ? 'config.json' : 'config.dist.json';
+var config = require('./' + configFile);
 
 /**
  * Clean ups ./dist folder
@@ -110,6 +115,11 @@ gulp.task('copy', ['less'], function() {
   // copy all files inside html folder
   gulp
     .src(['./src/main/html/**/*'])
+    .pipe(
+      replace("http://petstore.swagger.io/v2/swagger.json",
+          config.defaultUrl
+      )
+    )
     .pipe(gulp.dest('./dist'))
     .on('error', gutil.log)
 });
