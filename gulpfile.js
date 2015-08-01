@@ -17,6 +17,7 @@ var header = require('gulp-header');
 var replace = require('gulp-replace');
 var pkg = require('./package.json');
 var order = require('gulp-order');
+var jshint = require('gulp-jshint');
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
   ' * @version v<%= pkg.version %>',
@@ -54,9 +55,18 @@ function templates() {
 }
 
 /**
+ * JShint all *.js files
+ */
+gulp.task('lint', function () {
+  return gulp.src('./src/main/javascript/**/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+/**
  * Build a distribution
  */
-gulp.task('dist', ['clean'], function() {
+gulp.task('dist', ['clean','lint'], function() {
 
   return es.merge(
       gulp.src([
@@ -87,7 +97,8 @@ gulp.task('less', ['clean'], function() {
     .src([
       './src/main/less/screen.less',
       './src/main/less/print.less',
-      './src/main/less/reset.less'
+      './src/main/less/reset.less',
+      './src/main/less/style.less'
     ])
     .pipe(less())
     .on('error', log)
@@ -105,6 +116,12 @@ gulp.task('copy', ['less'], function() {
   gulp
     .src(['./lib/**/*.{js,map}'])
     .pipe(gulp.dest('./dist/lib'))
+    .on('error', log);
+
+  // copy `lang` for translations
+  gulp
+    .src(['./lang/**/*.js'])
+    .pipe(gulp.dest('./dist/lang'))
     .on('error', log);
 
   // copy all files inside html folder
