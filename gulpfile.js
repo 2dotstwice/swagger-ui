@@ -132,6 +132,9 @@ gulp.task('copy', ['less'], function() {
           config.defaultUrl
       )
     )
+    .pipe(
+      replace("***host***", config.host)
+    )
     .pipe(gulp.dest('./dist'))
     .on('error', log);
 });

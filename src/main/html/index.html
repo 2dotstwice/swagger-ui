@@ -50,7 +50,7 @@
               clientId: "your-client-id",
               clientSecret: "your-client-secret",
               realm: "your-realms",
-              appName: "your-app-name", 
+              appName: "your-app-name",
               scopeSeparator: ","
             });
           }
@@ -64,6 +64,8 @@
           });
 
           addApiKeyAuthorization();
+          // set host
+          window.swaggerUi.api.setHost('***host***');
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
